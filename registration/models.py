@@ -212,7 +212,10 @@ class RegistrationProfile(models.Model):
                (self.user.date_joined + expiration_date <= datetime_now())
     activation_key_expired.boolean = True
 
-    def send_activation_email(self, site):
+	# AVENZA MOD - added kwargs for the templates for email subject and body
+    def send_activation_email(self, site,
+            email_subject_template='registration/activation_email_subject.txt',
+            email_template='registration/activation_email.txt'):
         """
         Send an activation email to the user associated with this
         ``RegistrationProfile``.
@@ -253,12 +256,12 @@ class RegistrationProfile(models.Model):
         ctx_dict = {'activation_key': self.activation_key,
                     'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
                     'site': site}
-        subject = render_to_string('registration/activation_email_subject.txt',
+        subject = render_to_string(email_subject_template,
                                    ctx_dict)
         # Email subject *must not* contain newlines
         subject = ''.join(subject.splitlines())
         
-        message = render_to_string('registration/activation_email.txt',
+        message = render_to_string(email_template,
                                    ctx_dict)
         
         self.user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)

@@ -4,6 +4,7 @@ Forms and validation code for user registration.
 """
 
 
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -14,6 +15,10 @@ from django.utils.translation import ugettext_lazy as _
 # in the HTML. Your mileage may vary. If/when Django ticket #3515
 # lands in trunk, this will no longer be necessary.
 attrs_dict = {'class': 'required'}
+
+
+class EmailAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(label=_("Username"), max_length=75)
 
 
 class RegistrationForm(forms.Form):
@@ -30,7 +35,7 @@ class RegistrationForm(forms.Form):
     
     """
     username = forms.RegexField(regex=r'^[\w.@+-]+$',
-                                max_length=30,
+                                max_length=75,
                                 widget=forms.TextInput(attrs=attrs_dict),
                                 label=_("Username"),
                                 error_messages={'invalid': _("This value may contain only letters, numbers and @/./+/-/_ characters.")})

@@ -71,12 +71,17 @@ class DefaultBackend(object):
 
         """
         username, email, password = kwargs['username'], kwargs['email'], kwargs['password1']
+
+		# AVENZA MOD - added send_email to the kwargs for this function so that we can disable the 
+		# email sending behaviour (and override it as needed)
+        send_email = kwargs.get("send_email", True)
+
         if Site._meta.installed:
             site = Site.objects.get_current()
         else:
             site = RequestSite(request)
         new_user = RegistrationProfile.objects.create_inactive_user(username, email,
-                                                                    password, site)
+                                                                    password, site, send_email)
         signals.user_registered.send(sender=self.__class__,
                                      user=new_user,
                                      request=request)
@@ -128,7 +133,7 @@ class DefaultBackend(object):
         user registration.
         
         """
-        return ('registration_complete', (), {})
+        return ('registration_complete/' + str(user.id) , (), {})
 
     def post_activation_redirect(self, request, user):
         """
