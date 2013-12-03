@@ -29,11 +29,14 @@ from django.conf.urls import url
 
 from django.contrib.auth import views as auth_views
 
+from forms import EmailAuthenticationForm
+
 
 urlpatterns = patterns('',
                        url(r'^login/$',
                            auth_views.login,
-                           {'template_name': 'registration/login.html'},
+                           {'template_name': 'registration/login.html',
+                            'authentication_form': EmailAuthenticationForm},
                            name='auth_login'),
                        url(r'^logout/$',
                            auth_views.logout,
